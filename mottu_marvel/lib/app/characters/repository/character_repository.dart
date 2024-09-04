@@ -81,9 +81,6 @@ class CharacterRepository {
 
   Future<Either<Failure, List<CharacterModel>>> getRelatedCharacters(
     List<int> comicsId,
-    List<int> seriesId,
-    List<int> storiesId,
-    List<int> eventsId,
   ) async {
     try {
       final response = await _http.get(

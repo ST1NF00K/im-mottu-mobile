@@ -113,9 +113,6 @@ class CharactersController extends GetxController with StateMixin<List<Character
 
         final response = await _repository.getRelatedCharacters(
           character.getComicIds(),
-          character.getSeriesIds(),
-          character.getStoryIds(),
-          character.getEventIds(),
         );
         response.fold(
           (failure) => change(null, status: RxStatus.error(failure.message)),
