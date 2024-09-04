@@ -13,9 +13,18 @@ class CharacterRepository {
 
   CharacterRepository({required HttpService http}) : _http = http;
 
-  Future<Either<Failure, List<CharacterModel>>> getCharactersList() async {
+  Future<Either<Failure, List<CharacterModel>>> getCharactersList({
+    required int offset,
+    required int limit,
+  }) async {
     try {
-      final response = await _http.get(ApiRoutes.characters);
+      final response = await _http.get(
+        ApiRoutes.characters,
+        queryParameters: {
+          'offset': offset.toString(),
+          'limit': limit.toString(),
+        },
+      );
       final data = List<Map<String, dynamic>>.from((response as Map)['data']['results']);
       final characters = data.map((e) => CharacterModel.fromJson(e)).toList();
       return Right(characters);
@@ -72,9 +81,6 @@ class CharacterRepository {
 
   Future<Either<Failure, List<CharacterModel>>> getRelatedCharacters(
     List<int> comicsId,
-    List<int> seriesId,
-    List<int> storiesId,
-    List<int> eventsId,
   ) async {
     try {
       final response = await _http.get(

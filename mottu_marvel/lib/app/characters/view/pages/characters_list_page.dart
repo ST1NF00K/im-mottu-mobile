@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/dependencies/setup_dependencies.dart';
+import '../../../../design_system/tokens/typography/text_styles.dart';
 import '../../controller/characters_controller.dart';
 import '../../controller/search_characters_controller.dart';
 import '../../models/character_model.dart';
@@ -17,12 +18,20 @@ class CharactersListPage extends StatefulWidget {
 class _CharactersListPageState extends State<CharactersListPage> {
   late final CharactersController _controller;
   late final SearchCharactersController _searchController;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _controller = getIt.get<CharactersController>();
+
+    _controller = getIt.get<CharactersController>()..loadCharacters();
     _searchController = getIt.get<SearchCharactersController>();
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        _controller.loadMoreCharacters();
+      }
+    });
   }
 
   @override
@@ -38,12 +47,12 @@ class _CharactersListPageState extends State<CharactersListPage> {
       body: GetBuilder<CharactersController>(
         init: _controller,
         builder: (controller) {
-          if (controller.status.isLoading) {
+          if (controller.status.isLoading && controller.characters.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           } else if (controller.status.isError) {
             return const Center(child: Text('Ocorreu um erro ao carregar a lista de personagens.'));
-          } else if (controller.status.isSuccess) {
-            final characters = controller.state ?? [];
+          } else if (controller.status.isSuccess || controller.characters.isNotEmpty) {
+            final characters = controller.characters;
             return _buildCharacterList(characters, controller);
           }
           return const Center(child: Text('A lista de personagens está vazia.'));
@@ -58,7 +67,10 @@ class _CharactersListPageState extends State<CharactersListPage> {
         if (_searchController.isSearching.value) {
           return _buildSearchField();
         } else {
-          return const Text('Personagens');
+          return Text(
+            'Personagens',
+            style: StylesFontStyles.headline1,
+          );
         }
       }),
       actions: [
@@ -107,6 +119,7 @@ class _CharactersListPageState extends State<CharactersListPage> {
     CharactersController controller,
   ) {
     return ListView.builder(
+      controller: _scrollController,
       itemCount: characters.length,
       itemBuilder: (context, index) {
         final character = characters[index];
@@ -119,16 +132,17 @@ class _CharactersListPageState extends State<CharactersListPage> {
             ),
             title: Text(character.name),
             onTap: () {
-              controller.getRelatedCharacters(characterId: character.id);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CharacterDetailsPage(
-                    character: character,
-                    relatedCharacters: controller.relatedCharacters,
+              controller.getRelatedCharacters(characterId: character.id).then((_) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CharacterDetailsPage(
+                      character: character,
+                      relatedCharacters: controller.relatedCharacters,
+                    ),
                   ),
-                ),
-              );
+                );
+              });
             },
           ),
         );

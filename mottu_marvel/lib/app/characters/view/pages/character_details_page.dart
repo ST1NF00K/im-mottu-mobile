@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mottu_marvel/design_system/styles/spacings/inset_spacings.dart';
-import 'package:mottu_marvel/design_system/styles/spacings/stack_spacings.dart';
-import '../../../../design_system/styles/typography/text_styles.dart';
+import 'package:mottu_marvel/app/characters/view/pages/related_character_details_page.dart';
+import 'package:mottu_marvel/design_system/tokens/spacings/inset_spacings.dart';
+import 'package:mottu_marvel/design_system/tokens/spacings/stack_spacings.dart';
+import '../../../../design_system/tokens/typography/text_styles.dart';
 import '../../models/character_model.dart';
 
 class CharacterDetailsPage extends StatelessWidget {
@@ -20,7 +21,7 @@ class CharacterDetailsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           character.name,
-          style: StylesFontStyles.headline2,
+          style: StylesFontStyles.headline1,
         ),
       ),
       body: Padding(
@@ -38,16 +39,37 @@ class CharacterDetailsPage extends StatelessWidget {
               character.description,
               style: StylesFontStyles.subtitle,
             ),
+            const SizedBox(height: StylesStackSpacings.xl),
+            if (relatedCharacters.isNotEmpty)
+              Text(
+                "Personagens relacionados",
+                style: StylesFontStyles.headline2,
+              ),
+            const SizedBox(height: StylesStackSpacings.l),
             ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemCount: relatedCharacters.length,
               itemBuilder: (context, index) {
                 final character = relatedCharacters[index];
-                return ListTile(
-                  title: Text(
-                    character.name,
-                    style: StylesFontStyles.subtitle,
+                return Card(
+                  child: ListTile(
+                    leading: Image.network(
+                      character.thumbnail.fullPath,
+                      fit: BoxFit.fitHeight,
+                      width: 60,
+                    ),
+                    title: Text(character.name),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RelatedCharacterDetailsPage(
+                            character: character,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 );
               },

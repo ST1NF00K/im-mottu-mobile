@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app/characters/view/pages/characters_list_page.dart';
+import 'app/splashscreen/splash_screen.dart';
 import 'core/dependencies/setup_dependencies.dart';
 
 void main() {
@@ -16,7 +17,11 @@ class MyApp extends StatelessWidget {
       title: 'Mottu Marvel',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      home: const CharactersListPage(),
+      initialRoute: '/',
+      routes: {
+        '/': (_) => const SplashScreen(),
+        '/home': (_) => const CharactersListPage(),
+      },
     );
   }
 }
