@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/dependencies/setup_dependencies.dart';
-import '../../../../design_system/styles/typography/text_styles.dart';
+import '../../../../design_system/tokens/typography/text_styles.dart';
 import '../../controller/characters_controller.dart';
 import '../../controller/search_characters_controller.dart';
 import '../../models/character_model.dart';
