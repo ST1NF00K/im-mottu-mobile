@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/dependencies/setup_dependencies.dart';
+import '../../../../design_system/styles/typography/text_styles.dart';
 import '../../controller/characters_controller.dart';
 import '../../controller/search_characters_controller.dart';
 import '../../models/character_model.dart';
@@ -66,7 +67,10 @@ class _CharactersListPageState extends State<CharactersListPage> {
         if (_searchController.isSearching.value) {
           return _buildSearchField();
         } else {
-          return const Text('Personagens');
+          return Text(
+            'Personagens',
+            style: StylesFontStyles.headline1,
+          );
         }
       }),
       actions: [
