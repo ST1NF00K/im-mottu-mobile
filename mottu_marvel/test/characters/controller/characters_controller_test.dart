@@ -8,15 +8,19 @@ import 'package:mottu_marvel/app/characters/models/contents_model.dart';
 import 'package:mottu_marvel/app/characters/models/thumbnail_model.dart';
 import 'package:mottu_marvel/app/characters/repository/character_repository.dart';
 import 'package:mottu_marvel/core/api/failure/failure.dart';
+import 'package:mottu_marvel/core/connection/connection_service.dart';
 
 class MockCharacterRepository extends Mock implements CharacterRepository {}
 
 class MockCharactersCache extends Mock implements CharactersCache {}
 
+class MockConnectionService extends Mock implements ConnectionService {}
+
 void main() {
   late CharactersController controller;
   late MockCharacterRepository mockRepository;
   late MockCharactersCache mockCache;
+  late MockConnectionService mockConnectionService;
 
   final selectedCharacter = CharacterModel(
     id: 1,
@@ -45,7 +49,12 @@ void main() {
   setUp(() {
     mockRepository = MockCharacterRepository();
     mockCache = MockCharactersCache();
-    controller = CharactersController(repository: mockRepository, cache: mockCache);
+    mockConnectionService = MockConnectionService();
+    controller = CharactersController(
+      repository: mockRepository,
+      cache: mockCache,
+      connectionService: mockConnectionService,
+    );
 
     registerFallbackValue(CharacterModel(
       id: 0,

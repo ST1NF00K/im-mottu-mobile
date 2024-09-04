@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:mottu_marvel/core/connection/connection_service.dart';
 import '../../app/characters/cache/caracters_cache.dart';
 import '../../app/characters/controller/characters_controller.dart';
 import '../../app/characters/controller/search_characters_controller.dart';
@@ -11,6 +12,10 @@ final GetIt getIt = GetIt.instance;
 void setupDependencies() {
   getIt.registerLazySingleton<HttpService>(
     () => DioHttpService(),
+  );
+
+  getIt.registerLazySingleton<ConnectionService>(
+    () => ConnectionService(),
   );
 
   getIt.registerLazySingleton<CharacterRepository>(
@@ -27,6 +32,7 @@ void setupDependencies() {
     () => CharactersController(
       repository: getIt.get<CharacterRepository>(),
       cache: getIt.get<CharactersCache>(),
+      connectionService: getIt.get<ConnectionService>(),
     ),
   );
 

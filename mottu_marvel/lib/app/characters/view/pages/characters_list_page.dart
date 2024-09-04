@@ -1,6 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../../../core/dependencies/setup_dependencies.dart';
 import '../../../../design_system/tokens/typography/text_styles.dart';
 import '../../controller/characters_controller.dart';
@@ -32,31 +32,66 @@ class _CharactersListPageState extends State<CharactersListPage> {
         _controller.loadMoreCharacters();
       }
     });
-  }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _controller.loadCharacters();
+    if (Platform.isAndroid) {
+      _controller.isConnected.listen((isConnected) {
+        if (!isConnected) {
+          Get.snackbar(
+            'Sem conexão',
+            'Você está desconectado da internet.',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 3),
+          );
+        }
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: GetBuilder<CharactersController>(
-        init: _controller,
-        builder: (controller) {
-          if (controller.status.isLoading && controller.characters.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (controller.status.isError) {
-            return const Center(child: Text('Ocorreu um erro ao carregar a lista de personagens.'));
-          } else if (controller.status.isSuccess || controller.characters.isNotEmpty) {
-            final characters = controller.characters;
-            return _buildCharacterList(characters, controller);
-          }
-          return const Center(child: Text('A lista de personagens está vazia.'));
-        },
+      body: Column(
+        children: [
+          Expanded(
+            child: GetBuilder<CharactersController>(
+              init: _controller,
+              builder: (controller) {
+                if (controller.status.isLoading && controller.characters.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (controller.status.isError) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          controller.status.errorMessage ?? 'Ocorreu um erro ao carregar os personagens.',
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: _controller.loadCharacters,
+                          child: const Text('Tentar novamente'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                if (controller.status.isSuccess || controller.characters.isNotEmpty) {
+                  final characters = controller.characters;
+                  return _buildCharacterList(characters, controller);
+                }
+
+                return const Center(child: Text('A lista de personagens está vazia.'));
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -123,12 +158,16 @@ class _CharactersListPageState extends State<CharactersListPage> {
       itemCount: characters.length,
       itemBuilder: (context, index) {
         final character = characters[index];
+
         return Card(
           child: ListTile(
             leading: Image.network(
               character.thumbnail.fullPath,
               fit: BoxFit.fitHeight,
               width: 60,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.error, color: Colors.red, size: 60);
+              },
             ),
             title: Text(character.name),
             onTap: () {
