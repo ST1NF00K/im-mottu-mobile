@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mottu_marvel/app/characters/view/pages/related_character_details_page.dart';
-import 'package:mottu_marvel/design_system/tokens/spacings/inset_spacings.dart';
-import 'package:mottu_marvel/design_system/tokens/spacings/stack_spacings.dart';
-import '../../../../design_system/tokens/typography/text_styles.dart';
+import 'package:mottu_marvel/styles/tokens/spacings/inset_spacings.dart';
+import 'package:mottu_marvel/styles/tokens/spacings/stack_spacings.dart';
+import '../../../../styles/tokens/typography/text_styles.dart';
 import '../../models/character_model.dart';
 
 class CharacterDetailsPage extends StatelessWidget {
@@ -37,7 +37,7 @@ class CharacterDetailsPage extends StatelessWidget {
             const SizedBox(height: StylesStackSpacings.l),
             Text(
               character.description,
-              style: StylesFontStyles.subtitle,
+              style: StylesFontStyles.description,
             ),
             const SizedBox(height: StylesStackSpacings.xl),
             if (relatedCharacters.isNotEmpty)
@@ -61,7 +61,7 @@ class CharacterDetailsPage extends StatelessWidget {
                     ),
                     title: Text(character.name),
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => RelatedCharacterDetailsPage(
