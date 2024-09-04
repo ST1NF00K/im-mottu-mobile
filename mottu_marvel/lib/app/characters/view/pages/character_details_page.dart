@@ -6,10 +6,12 @@ import '../../models/character_model.dart';
 
 class CharacterDetailsPage extends StatelessWidget {
   final CharacterModel character;
+  final List<CharacterModel> relatedCharacters;
 
   const CharacterDetailsPage({
     super.key,
     required this.character,
+    required this.relatedCharacters,
   });
 
   @override
@@ -23,21 +25,32 @@ class CharacterDetailsPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(StylesInsetSpacings.m),
-        child: Column(
+        child: ListView(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(30.0),
-              child: Image.network(
-                character.thumbnail.fullPath,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.width,
-                fit: BoxFit.cover,
-              ),
+            Image.network(
+              character.thumbnail.fullPath,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.width,
+              fit: BoxFit.contain,
             ),
             const SizedBox(height: StylesStackSpacings.l),
             Text(
               character.description,
               style: StylesFontStyles.subtitle,
+            ),
+            ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: relatedCharacters.length,
+              itemBuilder: (context, index) {
+                final character = relatedCharacters[index];
+                return ListTile(
+                  title: Text(
+                    character.name,
+                    style: StylesFontStyles.subtitle,
+                  ),
+                );
+              },
             ),
           ],
         ),
