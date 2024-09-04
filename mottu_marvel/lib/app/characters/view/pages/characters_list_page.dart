@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mottu_marvel/design_system/tokens/spacings/stack_spacings.dart';
+import 'package:mottu_marvel/styles/tokens/spacings/stack_spacings.dart';
 
 import '../../../../core/dependencies/setup_dependencies.dart';
-import '../../../../design_system/tokens/spacings/inset_spacings.dart';
-import '../../../../design_system/tokens/typography/text_styles.dart';
+import '../../../../styles/tokens/spacings/inset_spacings.dart';
+import '../../../../styles/tokens/typography/text_styles.dart';
 import '../../controller/characters_controller.dart';
 import '../../controller/search_characters_controller.dart';
 import '../../models/character_model.dart';
