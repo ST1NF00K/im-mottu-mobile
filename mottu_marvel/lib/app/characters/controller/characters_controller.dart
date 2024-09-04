@@ -13,6 +13,10 @@ class CharactersController extends GetxController with StateMixin<List<Character
   })  : _repository = repository,
         _cache = cache;
 
+  final RxBool _hasMore = true.obs;
+  final RxInt _offset = 0.obs;
+  final int _limit = 20;
+
   RxList<CharacterModel> characters = <CharacterModel>[].obs;
   RxList<CharacterModel> relatedCharacters = <CharacterModel>[].obs;
   Rxn<CharacterModel> selectedCharacter = Rxn<CharacterModel>();
@@ -28,23 +32,39 @@ class CharactersController extends GetxController with StateMixin<List<Character
     if (cachedCharacters.isNotEmpty) {
       characters.value = cachedCharacters;
       change(cachedCharacters, status: RxStatus.success());
+      _offset.value = cachedCharacters.length;
     } else {
       await getCharacters();
     }
   }
 
-  Future<void> getCharacters() async {
+  Future<void> getCharacters({bool isLoadMore = false}) async {
+    if (!isLoadMore && !_hasMore.value) return;
+
     change(null, status: RxStatus.loading());
-    final response = await _repository.getCharactersList();
+    final response = await _repository.getCharactersList(
+      offset: _offset.value,
+      limit: _limit,
+    );
+
     response.fold(
       (failure) => change(null, status: RxStatus.error(failure.message)),
       (success) {
-        characters.value = success;
-        _cache.clear();
-        for (var character in success) {
-          _cache.addData(character);
+        if (success.isEmpty) {
+          _hasMore.value = false;
+        } else {
+          if (isLoadMore) {
+            characters.addAll(success);
+          } else {
+            characters.value = success;
+          }
+          _offset.value += success.length;
+          _cache.clear();
+          for (var character in success) {
+            _cache.addData(character);
+          }
+          change(success, status: RxStatus.success());
         }
-        change(success, status: RxStatus.success());
       },
     );
   }
@@ -64,7 +84,6 @@ class CharactersController extends GetxController with StateMixin<List<Character
   }
 
   Future<CharacterModel?> _getCharacterById(int characterId) async {
-    selectedCharacter.value = null;
     change(null, status: RxStatus.loading());
     final response = await _repository.getCharacterById(characterId);
     response.fold(
@@ -85,7 +104,7 @@ class CharactersController extends GetxController with StateMixin<List<Character
       relatedCharacters.value = cachedRelatedCharacters;
       change(cachedRelatedCharacters, status: RxStatus.success());
     } else {
-      _getCharacterById(characterId);
+      await _getCharacterById(characterId);
 
       final character = selectedCharacter.value;
 
@@ -107,6 +126,12 @@ class CharactersController extends GetxController with StateMixin<List<Character
           },
         );
       }
+    }
+  }
+
+  Future<void> loadMoreCharacters() async {
+    if (_hasMore.value) {
+      await getCharacters(isLoadMore: true);
     }
   }
 }
