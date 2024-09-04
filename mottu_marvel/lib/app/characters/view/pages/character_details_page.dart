@@ -25,14 +25,11 @@ class CharacterDetailsPage extends StatelessWidget {
         padding: const EdgeInsets.all(StylesInsetSpacings.m),
         child: Column(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(30.0),
-              child: Image.network(
-                character.thumbnail.fullPath,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.width,
-                fit: BoxFit.cover,
-              ),
+            Image.network(
+              character.thumbnail.fullPath,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.width,
+              fit: BoxFit.contain,
             ),
             const SizedBox(height: StylesStackSpacings.l),
             Text(

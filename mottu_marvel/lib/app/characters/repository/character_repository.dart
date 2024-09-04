@@ -18,11 +18,35 @@ class CharacterRepository {
       final characters = data.map((e) => CharacterModel.fromJson(e)).toList();
       return Right(characters);
     } on Exception catch (e, s) {
-      return Left(Failure(
-        message: 'Failed to retrieve character list',
-        exception: e,
-        stackTrace: s,
-      ));
+      return Left(
+        Failure(
+          message: 'Failed to retrieve character list',
+          exception: e,
+          stackTrace: s,
+        ),
+      );
+    }
+  }
+
+  Future<Either<Failure, List<CharacterModel>>> filterCharactersByName({required String query}) async {
+    try {
+      final response = await _http.get(
+        ApiRoutes.characters,
+        queryParameters: {
+          "nameStartsWith": query,
+        },
+      );
+      final data = List<Map<String, dynamic>>.from((response as Map)['data']['results']);
+      final characters = data.map((e) => CharacterModel.fromJson(e)).toList();
+      return Right(characters);
+    } on Exception catch (e, s) {
+      return Left(
+        Failure(
+          message: 'Failed to retrieve character list',
+          exception: e,
+          stackTrace: s,
+        ),
+      );
     }
   }
 }

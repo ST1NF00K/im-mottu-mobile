@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../../../../core/dependencies/setup_dependencies.dart';
 import '../../controller/characters_list_controller.dart';
+import '../../controller/search_characters_controller.dart';
 import 'character_details_page.dart';
 
 class CharactersListPage extends StatefulWidget {
@@ -14,17 +15,67 @@ class CharactersListPage extends StatefulWidget {
 
 class _CharactersListPageState extends State<CharactersListPage> {
   late final CharactersListController _controller;
+  late final SearchCharactersController _searchController;
 
   @override
   void initState() {
     super.initState();
     _controller = getIt.get<CharactersListController>();
+    _searchController = getIt.get<SearchCharactersController>();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Personagens')),
+      appBar: AppBar(
+        title: Obx(() {
+          if (_searchController.isSearching.value) {
+            return TextField(
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: 'Pesquisar...',
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    _searchController.stopSearching();
+                    _controller.getCharacters();
+                  },
+                ),
+              ),
+              onChanged: (value) {
+                if (value != '') {
+                  _searchController.startSearching();
+                  _controller.filterCharactersByName(query: value);
+                } else {
+                  _searchController.stopSearching();
+                  _controller.getCharacters();
+                }
+              },
+            );
+          } else {
+            return const Text('Personagens');
+          }
+        }),
+        actions: [
+          Obx(() {
+            if (!_searchController.isSearching.value) {
+              return IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  _searchController.startSearching();
+                },
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+        ],
+      ),
       body: GetBuilder<CharactersListController>(
         init: _controller,
         builder: (controller) {

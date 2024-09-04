@@ -13,14 +13,31 @@ class CharactersListController extends GetxController with StateMixin<List<Chara
     getCharacters();
   }
 
-  RxList characters = <CharacterModel>[].obs;
+  RxList<CharacterModel> characters = <CharacterModel>[].obs;
 
   Future<void> getCharacters() async {
     change(null, status: RxStatus.loading());
     final response = await _repository.getCharactersList();
     response.fold(
       (failure) => change(null, status: RxStatus.error(failure.message)),
-      (success) => change(success, status: RxStatus.success()),
+      (success) {
+        characters.value = success;
+        change(success, status: RxStatus.success());
+      },
+    );
+  }
+
+  Future<void> filterCharactersByName({required String query}) async {
+    change(null, status: RxStatus.loading());
+    final response = await _repository.filterCharactersByName(
+      query: query,
+    );
+    response.fold(
+      (failure) => change(null, status: RxStatus.error(failure.message)),
+      (success) {
+        characters.value = success;
+        change(success, status: RxStatus.success());
+      },
     );
   }
 }
