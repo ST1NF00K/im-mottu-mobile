@@ -11,26 +11,26 @@ Um aplicativo onde você pode consultar a lista de personagens da Marvel e suas 
 - [x] Conta criada em developer.marvel.com.
 - [x] API KEY gerada e APIs da Marvel consumidas.
 - [x] README criado para marcar os itens feitos.
-- [ ] Build para a plataforma iOS concluída.
+- [x] Build para a plataforma iOS concluída.
 
 ## Nível 1 - Branch `level_1`:
-- [ ] Listagem dos personagens implementada.
-- [ ] Ação de clique nos cards para exibir detalhes.
+- [x] Listagem dos personagens implementada.
+- [x] Ação de clique nos cards para exibir detalhes.
 
 ## Nível 2 - Branch `level_2`:
-- [ ] Cache implementado.
-- [ ] Filtro para a listagem criado.
-- [ ] Detalhes dos personagens relacionados implementados.
+- [x] Cache implementado.
+- [x] Filtro para a listagem criado.
+- [x] Detalhes dos personagens relacionados implementados.
 
 ## Nível 3 - Branch `level_3`:
-- [ ] Splashscreen customizada criada.
-- [ ] Cache limpo no fechamento do APP.
-- [ ] Paginação implementada.
+- [x] Splashscreen customizada criada.
+- [x] Cache limpo no fechamento do APP.
+- [x] Paginação implementada.
 - [ ] Testes de unidade das regras de negócio criados.
-- [ ] Clique em personagens relacionados para exibir detalhes.
+- [x] Clique em personagens relacionados para exibir detalhes.
 
 ## Pontos Extras:
-- [ ] Getx utilizado.
+- [x] Getx utilizado.
 - [ ] Firebase Crashlytics configurado.
 - [ ] Channel em Kotlin criado para capturar mudança de conexão.
-- [ ] Arquitetura implementada.
+- [x] Arquitetura implementada.
