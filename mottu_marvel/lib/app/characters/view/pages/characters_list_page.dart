@@ -87,15 +87,23 @@ class _CharactersListPageState extends State<CharactersListPage> {
         mainAxisSpacing: StylesInsetSpacings.m,
       ),
       padding: const EdgeInsets.all(StylesInsetSpacings.m),
-      itemCount: characters.length,
+      itemCount: characters.length + (controller.hasMore.value ? 1 : 0),
       itemBuilder: (context, index) {
+        if (index == characters.length) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(StylesInsetSpacings.m),
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
         final character = characters[index];
         return InkWell(
           onTap: () {
             controller.getRelatedCharacters(characterId: character.id).then((_) {
               if (mounted) {
                 Navigator.push(
-                  // ignore: use_build_context_synchronously
                   context,
                   MaterialPageRoute(
                     builder: (context) => CharacterDetailsPage(
