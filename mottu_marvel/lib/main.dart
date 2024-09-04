@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app/characters/view/pages/characters_list_page.dart';
 import 'core/dependencies/setup_dependencies.dart';
 
 void main() {
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: Container(),
+      home: const CharactersListPage(),
     );
   }
 }

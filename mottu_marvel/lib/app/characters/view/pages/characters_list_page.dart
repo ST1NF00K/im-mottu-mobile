@@ -5,14 +5,14 @@ import '../../../../core/dependencies/setup_dependencies.dart';
 import '../../controller/characters_list_controller.dart';
 import 'character_details_page.dart';
 
-class CharactersListView extends StatefulWidget {
-  const CharactersListView({super.key});
+class CharactersListPage extends StatefulWidget {
+  const CharactersListPage({super.key});
 
   @override
-  State<CharactersListView> createState() => _CharactersListViewState();
+  State<CharactersListPage> createState() => _CharactersListPageState();
 }
 
-class _CharactersListViewState extends State<CharactersListView> {
+class _CharactersListPageState extends State<CharactersListPage> {
   late final CharactersListController _controller;
 
   @override
@@ -46,7 +46,7 @@ class _CharactersListViewState extends State<CharactersListView> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CharacterDetailsView(character: character),
+                          builder: (context) => CharacterDetailsPage(character: character),
                         ),
                       );
                     },
