@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../core/dependencies/setup_dependencies.dart';
-import '../../controller/characters_list_controller.dart';
+import '../../controller/characters_controller.dart';
 import '../../controller/search_characters_controller.dart';
 import 'character_details_page.dart';
 
@@ -14,20 +14,20 @@ class CharactersListPage extends StatefulWidget {
 }
 
 class _CharactersListPageState extends State<CharactersListPage> {
-  late final CharactersListController _controller;
+  late final CharactersController _controller;
   late final SearchCharactersController _searchController;
 
   @override
   void initState() {
     super.initState();
-    _controller = getIt.get<CharactersListController>();
+    _controller = getIt.get<CharactersController>();
     _searchController = getIt.get<SearchCharactersController>();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _controller.getCharacters();
+    _controller.loadCharacters();
   }
 
   @override
@@ -76,7 +76,7 @@ class _CharactersListPageState extends State<CharactersListPage> {
           }),
         ],
       ),
-      body: GetBuilder<CharactersListController>(
+      body: GetBuilder<CharactersController>(
         init: _controller,
         builder: (controller) {
           if (controller.status.isLoading) {
