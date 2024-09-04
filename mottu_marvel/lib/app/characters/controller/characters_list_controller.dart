@@ -7,6 +7,14 @@ class CharactersListController extends GetxController with StateMixin<List<Chara
 
   CharactersListController({required CharacterRepository repository}) : _repository = repository;
 
+  @override
+  void onInit() {
+    super.onInit();
+    getCharacters();
+  }
+
+  RxList characters = <CharacterModel>[].obs;
+
   Future<void> getCharacters() async {
     change(null, status: RxStatus.loading());
     final response = await _repository.getCharactersList();

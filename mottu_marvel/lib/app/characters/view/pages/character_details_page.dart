@@ -24,18 +24,17 @@ class CharacterDetailsPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(StylesInsetSpacings.m),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(
-              character.thumbnail.fullPath,
-              height: 40,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(30.0),
+              child: Image.network(
+                character.thumbnail.fullPath,
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.width,
+                fit: BoxFit.cover,
+              ),
             ),
-            const SizedBox(height: StylesStackSpacings.m),
-            Text(
-              character.name,
-              style: StylesFontStyles.title,
-            ),
-            const SizedBox(height: StylesStackSpacings.m),
+            const SizedBox(height: StylesStackSpacings.l),
             Text(
               character.description,
               style: StylesFontStyles.subtitle,

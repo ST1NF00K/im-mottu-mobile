@@ -25,7 +25,7 @@ class _CharactersListPageState extends State<CharactersListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Personagens')),
-      body: GetX<CharactersListController>(
+      body: GetBuilder<CharactersListController>(
         init: _controller,
         builder: (controller) {
           if (controller.status.isLoading) {
@@ -40,7 +40,11 @@ class _CharactersListPageState extends State<CharactersListPage> {
                 final character = characters[index];
                 return Card(
                   child: ListTile(
-                    leading: Image.network(character.thumbnail.fullPath),
+                    leading: Image.network(
+                      character.thumbnail.fullPath,
+                      fit: BoxFit.fitHeight,
+                      width: 60,
+                    ),
                     title: Text(character.name),
                     onTap: () {
                       Navigator.push(
