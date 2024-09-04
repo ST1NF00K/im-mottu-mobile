@@ -18,7 +18,7 @@ class CharactersController extends GetxController with StateMixin<List<Character
         _crashlytics = crashlytics;
 
   final RxBool _hasMore = true.obs;
-  final RxInt _offset = 0.obs;
+  RxInt _offset = 0.obs;
   final int _limit = 20;
 
   RxList<CharacterModel> characters = <CharacterModel>[].obs;
@@ -29,6 +29,10 @@ class CharactersController extends GetxController with StateMixin<List<Character
   void onInit() {
     super.onInit();
     loadCharacters();
+  }
+
+  void resetOffset() {
+    _offset = 0.obs;
   }
 
   Future<void> loadCharacters() async {

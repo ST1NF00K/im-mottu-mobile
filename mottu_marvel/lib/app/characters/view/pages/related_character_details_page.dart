@@ -34,7 +34,7 @@ class RelatedCharacterDetailsPage extends StatelessWidget {
             const SizedBox(height: StylesStackSpacings.l),
             Text(
               character.description,
-              style: StylesFontStyles.subtitle,
+              style: StylesFontStyles.description,
             ),
           ],
         ),

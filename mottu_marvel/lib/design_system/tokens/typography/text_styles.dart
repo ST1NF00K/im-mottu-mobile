@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 import 'font_sizes.dart';
 
 class StylesFontStyles {
+  static TextStyle get header => const TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.w800,
+        color: Colors.white,
+      );
+
   static TextStyle get headline1 => const TextStyle(
         fontSize: StylesFontSizes.xxl,
         fontWeight: FontWeight.bold,
@@ -21,10 +27,15 @@ class StylesFontStyles {
         fontSize: StylesFontSizes.l,
         fontWeight: FontWeight.bold,
         letterSpacing: 0.3,
-        color: Colors.white,
+        color: Color.fromRGBO(255, 255, 255, 1),
       );
 
   static TextStyle get subtitle => const TextStyle(
+        color: Colors.white,
+        fontSize: 16,
+      );
+
+  static TextStyle get description => const TextStyle(
         fontSize: StylesFontSizes.m,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.2,
