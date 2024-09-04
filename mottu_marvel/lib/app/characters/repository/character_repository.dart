@@ -42,7 +42,7 @@ class CharacterRepository {
     } on Exception catch (e, s) {
       return Left(
         Failure(
-          message: 'Failed to retrieve character list',
+          message: 'Failed to retrieve characters',
           exception: e,
           stackTrace: s,
         ),
