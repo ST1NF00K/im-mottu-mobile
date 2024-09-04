@@ -14,9 +14,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Mottu Marvel',
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-      ),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark(),
       home: const CharactersListPage(),
     );
   }
