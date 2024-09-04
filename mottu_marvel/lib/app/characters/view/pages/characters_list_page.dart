@@ -52,7 +52,7 @@ class _CharactersListPageState extends State<CharactersListPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(),
+            _CharactersPageHeader(searchController: _searchController, controller: _controller),
             Expanded(
               child: GetBuilder<CharactersController>(
                 init: _controller,
@@ -75,7 +75,57 @@ class _CharactersListPageState extends State<CharactersListPage> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildCharacterGrid(
+    List<CharacterModel> characters,
+    CharactersController controller,
+  ) {
+    return GridView.builder(
+      controller: _scrollController,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: StylesInsetSpacings.m,
+        mainAxisSpacing: StylesInsetSpacings.m,
+      ),
+      padding: const EdgeInsets.all(StylesInsetSpacings.m),
+      itemCount: characters.length,
+      itemBuilder: (context, index) {
+        final character = characters[index];
+        return InkWell(
+          onTap: () {
+            controller.getRelatedCharacters(characterId: character.id).then((_) {
+              if (mounted) {
+                Navigator.push(
+                  // ignore: use_build_context_synchronously
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CharacterDetailsPage(
+                      character: character,
+                      relatedCharacters: controller.relatedCharacters,
+                    ),
+                  ),
+                );
+              }
+            });
+          },
+          child: _CharacterItemCard(character: character),
+        );
+      },
+    );
+  }
+}
+
+class _CharactersPageHeader extends StatelessWidget {
+  const _CharactersPageHeader({
+    required SearchCharactersController searchController,
+    required CharactersController controller,
+  })  : _searchController = searchController,
+        _controller = controller;
+
+  final SearchCharactersController _searchController;
+  final CharactersController _controller;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.red.shade400,
@@ -103,14 +153,60 @@ class _CharactersListPageState extends State<CharactersListPage> {
               ),
             ),
             const SizedBox(height: StylesStackSpacings.xxl),
-            _buildSearchField(),
+            _CharactersListSearchField(searchController: _searchController, controller: _controller),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildSearchField() {
+class _CharacterItemCard extends StatelessWidget {
+  const _CharacterItemCard({
+    required this.character,
+  });
+
+  final CharacterModel character;
+
+  @override
+  Widget build(BuildContext context) {
+    return Hero(
+      tag: 'character ${character.id}',
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(character.thumbnail.fullPath),
+            fit: BoxFit.cover,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(color: Colors.red.withOpacity(0.6)),
+          child: Text(
+            character.name,
+            textAlign: TextAlign.center,
+            style: StylesFontStyles.subtitle,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CharactersListSearchField extends StatelessWidget {
+  const _CharactersListSearchField({
+    required SearchCharactersController searchController,
+    required CharactersController controller,
+  })  : _searchController = searchController,
+        _controller = controller;
+
+  final SearchCharactersController _searchController;
+  final CharactersController _controller;
+
+  @override
+  Widget build(BuildContext context) {
     return Obx(() {
       return TextField(
         style: const TextStyle(color: Colors.black45),
@@ -147,61 +243,5 @@ class _CharactersListPageState extends State<CharactersListPage> {
         },
       );
     });
-  }
-
-  Widget _buildCharacterGrid(
-    List<CharacterModel> characters,
-    CharactersController controller,
-  ) {
-    return GridView.builder(
-      controller: _scrollController,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: StylesInsetSpacings.m,
-        mainAxisSpacing: StylesInsetSpacings.m,
-      ),
-      padding: const EdgeInsets.all(StylesInsetSpacings.m),
-      itemCount: characters.length,
-      itemBuilder: (context, index) {
-        final character = characters[index];
-        return InkWell(
-          onTap: () {
-            controller.getRelatedCharacters(characterId: character.id).then((_) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CharacterDetailsPage(
-                    character: character,
-                    relatedCharacters: controller.relatedCharacters,
-                  ),
-                ),
-              );
-            });
-          },
-          child: Hero(
-            tag: 'character $index',
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(character.thumbnail.fullPath),
-                  fit: BoxFit.cover,
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(color: Colors.red.withOpacity(0.6)),
-                child: Text(
-                  character.name,
-                  textAlign: TextAlign.center,
-                  style: StylesFontStyles.subtitle,
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
   }
 }
