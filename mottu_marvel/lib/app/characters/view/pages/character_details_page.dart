@@ -61,7 +61,7 @@ class CharacterDetailsPage extends StatelessWidget {
                     ),
                     title: Text(character.name),
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => RelatedCharacterDetailsPage(
