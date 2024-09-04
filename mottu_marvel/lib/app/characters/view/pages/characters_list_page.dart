@@ -25,9 +25,9 @@ class _CharactersListPageState extends State<CharactersListPage> {
   }
 
   @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _controller.getCharacters();
   }
 
   @override
@@ -98,10 +98,14 @@ class _CharactersListPageState extends State<CharactersListPage> {
                     ),
                     title: Text(character.name),
                     onTap: () {
+                      controller.getRelatedCharacters(characterId: character.id);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CharacterDetailsPage(character: character),
+                          builder: (context) => CharacterDetailsPage(
+                            character: character,
+                            relatedCharacters: controller.relatedCharacters,
+                          ),
                         ),
                       );
                     },
