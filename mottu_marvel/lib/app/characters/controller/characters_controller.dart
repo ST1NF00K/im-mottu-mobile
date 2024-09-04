@@ -17,8 +17,9 @@ class CharactersController extends GetxController with StateMixin<List<Character
         _cache = cache,
         _crashlytics = crashlytics;
 
-  final RxBool _hasMore = true.obs;
-  final RxInt _offset = 0.obs;
+  RxString searchQuery = ''.obs;
+  final RxBool hasMore = true.obs;
+  RxInt _offset = 0.obs;
   final int _limit = 20;
 
   RxList<CharacterModel> characters = <CharacterModel>[].obs;
@@ -29,6 +30,14 @@ class CharactersController extends GetxController with StateMixin<List<Character
   void onInit() {
     super.onInit();
     loadCharacters();
+  }
+
+  void resetOffset() {
+    _offset = 0.obs;
+  }
+
+  void updateSearchQuery(String query) {
+    searchQuery = query.obs;
   }
 
   Future<void> loadCharacters() async {
@@ -48,7 +57,7 @@ class CharactersController extends GetxController with StateMixin<List<Character
   }
 
   Future<void> getCharacters({bool isLoadMore = false}) async {
-    if (!isLoadMore && !_hasMore.value) return;
+    if (!isLoadMore && !hasMore.value) return;
 
     try {
       change(null, status: RxStatus.loading());
@@ -64,7 +73,7 @@ class CharactersController extends GetxController with StateMixin<List<Character
         },
         (success) {
           if (success.isEmpty) {
-            _hasMore.value = false;
+            hasMore.value = false;
           } else {
             if (isLoadMore) {
               characters.addAll(success);
@@ -86,11 +95,11 @@ class CharactersController extends GetxController with StateMixin<List<Character
     }
   }
 
-  Future<void> filterCharactersByName({required String query}) async {
+  Future<void> filterCharactersByName() async {
     try {
       change(null, status: RxStatus.loading());
       final response = await _repository.filterCharactersByName(
-        query: query,
+        query: searchQuery.value,
       );
       response.fold(
         (failure) {
@@ -168,7 +177,7 @@ class CharactersController extends GetxController with StateMixin<List<Character
   }
 
   Future<void> loadMoreCharacters() async {
-    if (_hasMore.value) {
+    if (hasMore.value) {
       await getCharacters(isLoadMore: true);
     }
   }
