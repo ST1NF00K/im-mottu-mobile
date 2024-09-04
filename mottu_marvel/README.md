@@ -26,7 +26,7 @@ Um aplicativo onde você pode consultar a lista de personagens da Marvel e suas 
 - [x] Splashscreen customizada criada.
 - [x] Cache limpo no fechamento do APP.
 - [x] Paginação implementada.
-- [ ] Testes de unidade das regras de negócio criados.
+- [x] Testes de unidade das regras de negócio criados.
 - [x] Clique em personagens relacionados para exibir detalhes.
 
 ## Pontos Extras:
