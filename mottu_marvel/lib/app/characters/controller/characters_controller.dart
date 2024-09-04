@@ -17,6 +17,7 @@ class CharactersController extends GetxController with StateMixin<List<Character
         _cache = cache,
         _crashlytics = crashlytics;
 
+  RxString searchQuery = ''.obs;
   final RxBool hasMore = true.obs;
   RxInt _offset = 0.obs;
   final int _limit = 20;
@@ -33,6 +34,10 @@ class CharactersController extends GetxController with StateMixin<List<Character
 
   void resetOffset() {
     _offset = 0.obs;
+  }
+
+  void updateSearchQuery(String query) {
+    searchQuery = query.obs;
   }
 
   Future<void> loadCharacters() async {
@@ -90,11 +95,11 @@ class CharactersController extends GetxController with StateMixin<List<Character
     }
   }
 
-  Future<void> filterCharactersByName({required String query}) async {
+  Future<void> filterCharactersByName() async {
     try {
       change(null, status: RxStatus.loading());
       final response = await _repository.filterCharactersByName(
-        query: query,
+        query: searchQuery.value,
       );
       response.fold(
         (failure) {

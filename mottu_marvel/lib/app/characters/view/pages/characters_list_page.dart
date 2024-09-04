@@ -21,6 +21,7 @@ class _CharactersListPageState extends State<CharactersListPage> {
   late final CharactersController _controller;
   late final SearchCharactersController _searchController;
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _textEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -34,6 +35,12 @@ class _CharactersListPageState extends State<CharactersListPage> {
         _controller.loadMoreCharacters();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
   }
 
   @override
@@ -52,7 +59,11 @@ class _CharactersListPageState extends State<CharactersListPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _CharactersPageHeader(searchController: _searchController, controller: _controller),
+            _CharactersPageHeader(
+              searchController: _searchController,
+              controller: _controller,
+              textEditingController: _textEditingController,
+            ),
             Expanded(
               child: GetBuilder<CharactersController>(
                 init: _controller,
@@ -126,11 +137,14 @@ class _CharactersPageHeader extends StatelessWidget {
   const _CharactersPageHeader({
     required SearchCharactersController searchController,
     required CharactersController controller,
+    required TextEditingController textEditingController,
   })  : _searchController = searchController,
-        _controller = controller;
+        _controller = controller,
+        _textEditingController = textEditingController;
 
   final SearchCharactersController _searchController;
   final CharactersController _controller;
+  final TextEditingController _textEditingController;
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +175,11 @@ class _CharactersPageHeader extends StatelessWidget {
               ),
             ),
             const SizedBox(height: StylesStackSpacings.xxl),
-            _CharactersListSearchField(searchController: _searchController, controller: _controller),
+            _CharactersListSearchField(
+              searchController: _searchController,
+              controller: _controller,
+              textEditingController: _textEditingController,
+            ),
           ],
         ),
       ),
@@ -207,16 +225,20 @@ class _CharactersListSearchField extends StatelessWidget {
   const _CharactersListSearchField({
     required SearchCharactersController searchController,
     required CharactersController controller,
+    required TextEditingController textEditingController,
   })  : _searchController = searchController,
-        _controller = controller;
+        _controller = controller,
+        _textEditingController = textEditingController;
 
   final SearchCharactersController _searchController;
   final CharactersController _controller;
+  final TextEditingController _textEditingController;
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
       return TextField(
+        controller: _textEditingController,
         style: const TextStyle(color: Colors.black45),
         decoration: InputDecoration(
           hintText: 'Pesquisar...',
@@ -232,7 +254,9 @@ class _CharactersListSearchField extends StatelessWidget {
               ? IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () {
+                    _textEditingController.clear();
                     _searchController.stopSearching();
+                    _controller.updateSearchQuery('');
                     _controller.resetOffset();
                     _controller.getCharacters();
                   },
@@ -242,7 +266,8 @@ class _CharactersListSearchField extends StatelessWidget {
         onChanged: (value) {
           if (value.isNotEmpty) {
             _searchController.startSearching();
-            _controller.filterCharactersByName(query: value);
+            _controller.updateSearchQuery(value);
+            _controller.filterCharactersByName();
           } else {
             _searchController.stopSearching();
             _controller.resetOffset();
