@@ -10,6 +10,11 @@ A pasta styles é responsável pelos padrões de estilo, como espaçamento e tip
 
 Além disso, o cache de dados foi implementado em uma classe que armazena na própria memória RAM e é apagado automaticamente ao fechar o app, sem necessidade de usar Shared Preferences ou outras soluções de armazenamento persistente.
 
+Coisas que eu considero que poderiam ser melhoradas:
+
+- Utilizar o [flutter_dotenv](https://pub.dev/packages/flutter_dotenv) para manter informações sensíveis seguras, como a URL da API.
+- Utilizar o [cached_network_image](https://pub.dev/packages/cached_network_image) para salvar as imagens em cache.
+
 # Description
 
 Um aplicativo onde você pode consultar a lista de personagens da Marvel e suas informações.
