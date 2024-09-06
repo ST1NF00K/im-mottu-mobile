@@ -1,16 +1,14 @@
-import 'dart:async';
 import 'package:flutter/services.dart';
 
 class ConnectionService {
-  static const EventChannel _eventChannel = EventChannel('com.mottu.marvel/connectivity');
+  static const _methodChannel = MethodChannel('com.mottu.marvel/connectivity');
 
-  late final Stream<bool> _connectionStream;
-
-  ConnectionService() {
-    _connectionStream = _eventChannel.receiveBroadcastStream().map((dynamic event) {
-      return event as bool;
-    });
+  Future<String> getConnectivityStatus() async {
+    try {
+      final String connectivityStatus = await _methodChannel.invokeMethod('getConnectivityStatus');
+      return connectivityStatus;
+    } on PlatformException catch (e) {
+      return 'Falha ao obter status de conectividade: ${e.message}';
+    }
   }
-
-  Stream<bool> get connectionStream => _connectionStream;
 }

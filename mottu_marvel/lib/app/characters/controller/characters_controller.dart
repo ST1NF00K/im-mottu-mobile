@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:get/get.dart';
 import '../../../core/connection/connection_service.dart';
@@ -10,7 +11,6 @@ import '../repository/character_repository.dart';
 class CharactersController extends GetxController with StateMixin<List<CharacterModel>> {
   final CharacterRepository _repository;
   final CharactersCache _cache;
-  final ConnectionService _connectionService;
   late StreamSubscription<bool> _connectionSubscription;
   final CrashlyticsService _crashlytics;
 
@@ -21,37 +21,29 @@ class CharactersController extends GetxController with StateMixin<List<Character
     required CrashlyticsService crashlytics,
   })  : _repository = repository,
         _cache = cache,
-        _connectionService = connectionService,
         _crashlytics = crashlytics;
 
   RxString searchQuery = ''.obs;
   final RxBool hasMore = true.obs;
+  RxBool isLoadingMore = false.obs;
   RxInt _offset = 0.obs;
   final int _limit = 20;
 
   RxList<CharacterModel> characters = <CharacterModel>[].obs;
   RxList<CharacterModel> relatedCharacters = <CharacterModel>[].obs;
   Rxn<CharacterModel> selectedCharacter = Rxn<CharacterModel>();
-  RxBool isConnected = true.obs;
 
   @override
   void onInit() {
     super.onInit();
     loadCharacters();
-
-    _connectionSubscription = _connectionService.connectionStream.listen((bool connected) {
-      isConnected.value = connected;
-      if (!connected) {
-        change(null, status: RxStatus.error('Sem conexão com a internet.'));
-      } else {
-        loadCharacters();
-      }
-    });
   }
 
   @override
   void onClose() {
-    _connectionSubscription.cancel();
+    if (Platform.isAndroid) {
+      _connectionSubscription.cancel();
+    }
     super.onClose();
   }
 
@@ -81,10 +73,6 @@ class CharactersController extends GetxController with StateMixin<List<Character
 
   Future<void> getCharacters({bool isLoadMore = false}) async {
     if (!isLoadMore && !hasMore.value) return;
-    if (!isConnected.value) {
-      change(null, status: RxStatus.error('Sem conexão com a internet.'));
-      return;
-    }
 
     try {
       change(null, status: RxStatus.loading());
@@ -123,11 +111,6 @@ class CharactersController extends GetxController with StateMixin<List<Character
   }
 
   Future<void> filterCharactersByName() async {
-    if (!isConnected.value) {
-      change(null, status: RxStatus.error('Sem conexão com a internet.'));
-      return;
-    }
-
     try {
       change(null, status: RxStatus.loading());
       final response = await _repository.filterCharactersByName(
@@ -150,11 +133,6 @@ class CharactersController extends GetxController with StateMixin<List<Character
   }
 
   Future<CharacterModel?> _getCharacterById(int characterId) async {
-    if (!isConnected.value) {
-      change(null, status: RxStatus.error('Sem conexão com a internet.'));
-      return null;
-    }
-
     try {
       change(null, status: RxStatus.loading());
       final response = await _repository.getCharacterById(characterId);
@@ -177,11 +155,6 @@ class CharactersController extends GetxController with StateMixin<List<Character
   }
 
   Future<void> getRelatedCharacters({required int characterId}) async {
-    if (!isConnected.value) {
-      change(null, status: RxStatus.error('Sem conexão com a internet.'));
-      return;
-    }
-
     try {
       final cachedRelatedCharacters = _cache.getRelatedCharacters(characterId);
 

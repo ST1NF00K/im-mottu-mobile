@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mottu_marvel/core/connection/connection_controller.dart';
 import 'package:mottu_marvel/styles/tokens/spacings/stack_spacings.dart';
 
+import '../../../../core/connection/connection_service.dart';
 import '../../../../core/dependencies/setup_dependencies.dart';
 import '../../../../styles/tokens/spacings/inset_spacings.dart';
-import '../../../../styles/tokens/typography/text_styles.dart';
+import '../../../../styles/tokens/typography/font_styles.dart';
 import '../../controller/characters_controller.dart';
 import '../../controller/search_characters_controller.dart';
 import '../../models/character_model.dart';
@@ -22,10 +26,13 @@ class _CharactersListPageState extends State<CharactersListPage> {
   late final SearchCharactersController _searchController;
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _textEditingController = TextEditingController();
+  late final ConnectionController _connectionController;
 
   @override
   void initState() {
     super.initState();
+
+    _connectionController = getIt.get<ConnectionController>()..startCheckingConnection();
 
     _controller = getIt.get<CharactersController>()..loadCharacters();
     _searchController = getIt.get<SearchCharactersController>();
@@ -39,14 +46,9 @@ class _CharactersListPageState extends State<CharactersListPage> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _textEditingController.dispose();
     super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _controller.loadCharacters();
   }
 
   @override
@@ -64,6 +66,23 @@ class _CharactersListPageState extends State<CharactersListPage> {
               controller: _controller,
               textEditingController: _textEditingController,
             ),
+            Obx(() {
+              var status = _connectionController.connectionStatus.value;
+              String message = status == 'none' ? 'Você está offine!' : 'Você está conectado!';
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      message,
+                      style: StylesFontStyles.snackbar,
+                    ),
+                    backgroundColor: status == 'none' ? Colors.red : Colors.green,
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              });
+              return const SizedBox.shrink();
+            }),
             Expanded(
               child: GetBuilder<CharactersController>(
                 init: _controller,
@@ -98,7 +117,7 @@ class _CharactersListPageState extends State<CharactersListPage> {
         mainAxisSpacing: StylesInsetSpacings.m,
       ),
       padding: const EdgeInsets.all(StylesInsetSpacings.m),
-      itemCount: characters.length + (controller.hasMore.value ? 1 : 0),
+      itemCount: characters.length + (controller.isLoadingMore.value ? 1 : 0),
       itemBuilder: (context, index) {
         if (index == characters.length) {
           return const Center(
@@ -152,7 +171,7 @@ class _CharactersPageHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.red.shade400,
         image: const DecorationImage(
-          image: AssetImage('lib/design_system/assets/header_home.jpg'),
+          image: AssetImage('lib/styles/assets/header_home.jpg'),
           fit: BoxFit.cover,
           alignment: Alignment(-2.5, 0),
         ),

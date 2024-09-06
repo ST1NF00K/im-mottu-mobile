@@ -41,4 +41,10 @@ class StylesFontStyles {
         letterSpacing: 0.2,
         color: Colors.white70,
       );
+
+  static TextStyle get snackbar => const TextStyle(
+        fontSize: StylesFontSizes.s,
+        letterSpacing: 0.1,
+        color: Colors.white70,
+      );
 }

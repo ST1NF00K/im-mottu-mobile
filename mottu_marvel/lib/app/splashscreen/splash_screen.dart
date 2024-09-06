@@ -56,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
             children: [
               Align(
                 alignment: Alignment.center,
-                child: Image.asset('lib/design_system/assets/logo.png'),
+                child: Image.asset('lib/styles/assets/logo.png'),
               ),
               AnimatedBuilder(
                 animation: animation,
@@ -65,7 +65,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                   child: Opacity(
                     opacity: animation.value,
                     child: Gif(
-                      image: const AssetImage('lib/design_system/assets/snap.gif'),
+                      image: const AssetImage('lib/styles/assets/snap.gif'),
                       controller: gifController,
                       width: 160,
                       height: 160,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mottu_marvel/styles/tokens/spacings/inset_spacings.dart';
 import 'package:mottu_marvel/styles/tokens/spacings/stack_spacings.dart';
-import '../../../../styles/tokens/typography/text_styles.dart';
+import '../../../../styles/tokens/typography/font_styles.dart';
 import '../../models/character_model.dart';
 
 class RelatedCharacterDetailsPage extends StatelessWidget {
@@ -33,7 +33,7 @@ class RelatedCharacterDetailsPage extends StatelessWidget {
             ),
             const SizedBox(height: StylesStackSpacings.l),
             Text(
-              character.description,
+              character.description.isNotEmpty ? character.description : 'Esse personagem não tem descrição.',
               style: StylesFontStyles.description,
             ),
           ],
