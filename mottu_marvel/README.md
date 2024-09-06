@@ -1,14 +1,14 @@
 # Teste Prático - Desenvolvedores Mobile Mottu
 
-A arquitetura do teste segue o padrão MVP (Model-View-Presenter), com algumas adições para melhorar a organização do código.
+A arquitetura do teste segue o padrão MVP (Model-View-Presenter), com algumas adaptações.
 
-No MVP, a lógica de apresentação é separada da lógica de negócios e da interface do usuário. O Presenter atua como um intermediário entre a View e o Model, garantindo que a interface do usuário não precise lidar diretamente com a lógica de dados.
+Usei uma pasta repository para organizar as chamadas à API. A arquitetura foi separada em módulos. O único módulo é o de characters, que contém tudo relacionado aos personagens.
 
-Além do padrão MVP, também adicionei uma pasta repository, que é responsável por fazer as chamadas à API e centralizar o acesso a dados, permitindo que o Presenter trabalhe com dados sem se preocupar com a forma como eles são obtidos. Essa estrutura foi separada em módulos, sendo que atualmente só temos o módulo de characters, onde todas as funcionalidades relacionadas a personagens são implementadas.
+Também criei a pasta core para configurações gerais, como a injeção de dependências, que faço com GetIt. Para navegação, utilizo o Navigator, evitando acoplar tudo ao GetX, que está sendo utilizado apenas para o gerenciamento de estado.
 
-Na estrutura do app, também existe a pasta core, que lida com configurações gerais, como injeção de dependências e outras definições globais que afetam o aplicativo como um todo. Essa pasta centraliza funcionalidades que não estão vinculadas diretamente a um módulo específico.
+A pasta styles é responsável pelos padrões de estilo, como espaçamento e tipografia, e também poderia ser incluido a paleta de cores e outros componentes reutilizáveis. Os componentes específicos que não serão usados em outras partes do app estão dentro do módulo de characters para manter a organização modular.
 
-Por fim, há a pasta styles, que gerencia os padrões visuais da aplicação, como espaçamentos e tipografia. Poderíamos adicionar a ela a paleta de cores e componentes visuais reutilizáveis. No entanto, optei por manter os outros componentes relacionados exclusivamente ao módulo de characters dentro desse próprio módulo, pois não são reaproveitáveis em outras áreas do aplicativo.
+Além disso, o cache de dados foi implementado em uma classe que armazena na própria memória RAM e é apagado automaticamente ao fechar o app, sem necessidade de usar Shared Preferences ou outras soluções de armazenamento persistente.
 
 # Description
 
