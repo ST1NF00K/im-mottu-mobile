@@ -31,6 +31,6 @@ Um aplicativo onde você pode consultar a lista de personagens da Marvel e suas 
 
 ## Pontos Extras:
 - [x] Getx utilizado.
-- [ ] Firebase Crashlytics configurado.
-- [ ] Channel em Kotlin criado para capturar mudança de conexão.
+- [x] Firebase Crashlytics configurado.
+- [x] Channel em Kotlin criado para capturar mudança de conexão.
 - [x] Arquitetura implementada.
