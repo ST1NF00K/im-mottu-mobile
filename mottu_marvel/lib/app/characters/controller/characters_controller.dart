@@ -192,8 +192,16 @@ class CharactersController extends GetxController with StateMixin<List<Character
   }
 
   Future<void> loadMoreCharacters() async {
-    if (hasMore.value) {
+    if (!hasMore.value || isLoadingMore.value) return;
+
+    try {
+      isLoadingMore.value = true;
       await getCharacters(isLoadMore: true);
+    } catch (e, stack) {
+      _crashlytics.recordError(e, stack);
+      change(null, status: RxStatus.error('Erro carregar mais personagens.'));
+    } finally {
+      isLoadingMore.value = false;
     }
   }
 }

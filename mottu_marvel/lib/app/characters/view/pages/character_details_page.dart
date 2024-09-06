@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mottu_marvel/app/characters/view/pages/related_character_details_page.dart';
-import 'package:mottu_marvel/styles/tokens/spacings/inset_spacings.dart';
-import 'package:mottu_marvel/styles/tokens/spacings/stack_spacings.dart';
-import '../../../../styles/tokens/typography/font_styles.dart';
+
+import '../../../../styles/styles.dart';
 import '../../models/character_model.dart';
 
 class CharacterDetailsPage extends StatelessWidget {
