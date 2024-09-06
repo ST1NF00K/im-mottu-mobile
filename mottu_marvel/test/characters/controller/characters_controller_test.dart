@@ -8,11 +8,14 @@ import 'package:mottu_marvel/app/characters/models/contents_model.dart';
 import 'package:mottu_marvel/app/characters/models/thumbnail_model.dart';
 import 'package:mottu_marvel/app/characters/repository/character_repository.dart';
 import 'package:mottu_marvel/core/api/failure/failure.dart';
+import 'package:mottu_marvel/core/connection/connection_service.dart';
 import 'package:mottu_marvel/core/firebase/crashlytics_service.dart';
 
 class MockCharacterRepository extends Mock implements CharacterRepository {}
 
 class MockCharactersCache extends Mock implements CharactersCache {}
+
+class MockConnectionService extends Mock implements ConnectionService {}
 
 class MockCrashlyticsService extends Mock implements CrashlyticsService {}
 
@@ -20,6 +23,7 @@ void main() {
   late CharactersController controller;
   late MockCharacterRepository mockRepository;
   late MockCharactersCache mockCache;
+  late MockConnectionService mockConnectionService;
   late MockCrashlyticsService mockCrashlytics;
 
   final selectedCharacter = CharacterModel(
@@ -49,10 +53,13 @@ void main() {
   setUp(() {
     mockRepository = MockCharacterRepository();
     mockCache = MockCharactersCache();
+    mockConnectionService = MockConnectionService();
     mockCrashlytics = MockCrashlyticsService();
+
     controller = CharactersController(
       repository: mockRepository,
       cache: mockCache,
+      connectionService: mockConnectionService,
       crashlytics: mockCrashlytics,
     );
 

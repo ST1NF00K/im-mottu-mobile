@@ -1,4 +1,8 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:get/get.dart';
+import '../../../core/connection/connection_service.dart';
 import '../../../core/firebase/crashlytics_service.dart';
 import '../cache/caracters_cache.dart';
 import '../models/character_model.dart';
@@ -7,11 +11,13 @@ import '../repository/character_repository.dart';
 class CharactersController extends GetxController with StateMixin<List<CharacterModel>> {
   final CharacterRepository _repository;
   final CharactersCache _cache;
+  late StreamSubscription<bool> _connectionSubscription;
   final CrashlyticsService _crashlytics;
 
   CharactersController({
     required CharacterRepository repository,
     required CharactersCache cache,
+    required ConnectionService connectionService,
     required CrashlyticsService crashlytics,
   })  : _repository = repository,
         _cache = cache,
@@ -19,6 +25,7 @@ class CharactersController extends GetxController with StateMixin<List<Character
 
   RxString searchQuery = ''.obs;
   final RxBool hasMore = true.obs;
+  RxBool isLoadingMore = false.obs;
   RxInt _offset = 0.obs;
   final int _limit = 20;
 
@@ -30,6 +37,14 @@ class CharactersController extends GetxController with StateMixin<List<Character
   void onInit() {
     super.onInit();
     loadCharacters();
+  }
+
+  @override
+  void onClose() {
+    if (Platform.isAndroid) {
+      _connectionSubscription.cancel();
+    }
+    super.onClose();
   }
 
   void resetOffset() {
