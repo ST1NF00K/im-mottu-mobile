@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -67,20 +70,23 @@ class _CharactersListPageState extends State<CharactersListPage> {
               textEditingController: _textEditingController,
             ),
             Obx(() {
-              var status = _connectionController.connectionStatus.value;
-              String message = status == 'none' ? 'Você está offine!' : 'Você está conectado!';
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      message,
-                      style: StylesFontStyles.snackbar,
+              if (Platform.isAndroid) {
+                var status = _connectionController.connectionStatus.value;
+                String message = status == 'none' ? 'Você está offine!' : 'Você está conectado!';
+
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        message,
+                        style: StylesFontStyles.snackbar,
+                      ),
+                      backgroundColor: status == 'none' ? Colors.red : Colors.green,
+                      duration: const Duration(seconds: 3),
                     ),
-                    backgroundColor: status == 'none' ? Colors.red : Colors.green,
-                    duration: const Duration(seconds: 3),
-                  ),
-                );
-              });
+                  );
+                });
+              }
               return const SizedBox.shrink();
             }),
             Expanded(
@@ -93,7 +99,11 @@ class _CharactersListPageState extends State<CharactersListPage> {
                     return const Center(child: Text('Ocorreu um erro ao carregar a lista de personagens.'));
                   } else if (controller.status.isSuccess || controller.characters.isNotEmpty) {
                     final characters = controller.characters;
-                    return _buildCharacterGrid(characters, controller);
+                    return _CharactersGridView(
+                      scrollController: _scrollController,
+                      characters: characters,
+                      controller: controller,
+                    );
                   }
                   return const Center(child: Text('A lista de personagens está vazia.'));
                 },
@@ -104,11 +114,21 @@ class _CharactersListPageState extends State<CharactersListPage> {
       ),
     );
   }
+}
 
-  Widget _buildCharacterGrid(
-    List<CharacterModel> characters,
-    CharactersController controller,
-  ) {
+class _CharactersGridView extends StatelessWidget {
+  const _CharactersGridView({
+    required ScrollController scrollController,
+    required this.characters,
+    required this.controller,
+  }) : _scrollController = scrollController;
+
+  final ScrollController _scrollController;
+  final List<CharacterModel> characters;
+  final CharactersController controller;
+
+  @override
+  Widget build(BuildContext context) {
     return GridView.builder(
       controller: _scrollController,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -132,17 +152,15 @@ class _CharactersListPageState extends State<CharactersListPage> {
         return InkWell(
           onTap: () {
             controller.getRelatedCharacters(characterId: character.id).then((_) {
-              if (mounted) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CharacterDetailsPage(
-                      character: character,
-                      relatedCharacters: controller.relatedCharacters,
-                    ),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CharacterDetailsPage(
+                    character: character,
+                    relatedCharacters: controller.relatedCharacters,
                   ),
-                );
-              }
+                ),
+              );
             });
           },
           child: _CharacterItemCard(character: character),
